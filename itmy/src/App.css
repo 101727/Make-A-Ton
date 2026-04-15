@@ -1,38 +1,106 @@
-.App {
-  text-align: center;
+:root {
+  --bg-1: #0f0f0f;
+  --bg-2: #1d1d1d;
+  --panel: #171717;
+  --panel-border: #2f2f2f;
+  --text-main: #efefef;
+  --text-subtle: #bcbcbc;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 1rem;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at 15% 15%, #2a2a2a, transparent 40%),
+    radial-gradient(circle at 85% 80%, #272727, transparent 48%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  color: var(--text-main);
 }
 
-.App-link {
-  color: #61dafb;
+.hud {
+  width: min(980px, 100%);
+  background: color-mix(in srgb, var(--panel) 90%, black 10%);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.hud h1 {
+  margin: 0;
+  letter-spacing: 0.03em;
+  font-size: clamp(1.3rem, 2.3vw, 2rem);
+}
+
+.hud p {
+  margin: 0;
+  color: var(--text-subtle);
+}
+
+.stats-row {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: #111;
+  border: 1px solid #292929;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.stat-label {
+  color: #9f9f9f;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hud button {
+  width: fit-content;
+  padding: 0.55rem 0.9rem;
+  background: #e5e5e5;
+  border: 0;
+  color: #111;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hud button:hover {
+  filter: brightness(0.92);
+}
+
+.game-canvas {
+  width: min(980px, 100%);
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid #303030;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.38);
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 0.7rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .stats-row {
+    grid-template-columns: 1fr;
   }
 }
