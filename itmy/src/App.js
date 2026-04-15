@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
+import MainMenu from './components/MainMenu';
+import Score from './components/Score';
+import Timer from './components/Timer';
+import Win from './components/Win';
+import Lose from './components/Lose';
 
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
@@ -149,10 +154,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    startGame();
-  }, [startGame]);
-
-  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
       return undefined;
@@ -237,27 +238,32 @@ function App() {
     }
   };
 
-  const statusLabel =
-    status === 'playing' ? 'RUNNING' : status === 'won' ? 'WIN' : status === 'lost' ? 'LOSS' : 'READY';
-  const resultLine =
-    status === 'won'
-      ? `Survived 60s. Score: ${finalScore}/${TOTAL_BOXES} fully frozen`
-      : status === 'lost'
-      ? 'A box reached gone state. Click Restart.'
-      : 'Click any box to reset it back to full.';
+  const handleRestart = useCallback(() => {
+    setStatus('ready');
+  }, []);
+
+  if (status === 'ready') {
+    return <MainMenu onStart={startGame} />;
+  }
+
+  if (status === 'won') {
+    return <Win score={finalScore} onRestart={handleRestart} />;
+  }
+
+  if (status === 'lost') {
+    return <Lose score={fullBoxes} onRestart={handleRestart} />;
+  }
 
   return (
     <div className="app-shell">
       <div className="hud">
         <h1>Ice To Meet You</h1>
         <div className="stats-row">
-          <strong>{timeLeft.toFixed(1)}s</strong>
-          <strong>
-            {fullBoxes}/{TOTAL_BOXES} full
-          </strong>
-          <strong>{statusLabel}</strong>
+          <Timer initialSeconds={Math.ceil(timeLeft)} />
+          <Score initialScore={fullBoxes} />
+          <strong>{fullBoxes}/{TOTAL_BOXES} full</strong>
         </div>
-        <button type="button" onClick={startGame}>
+        <button type="button" onClick={handleRestart}>
           Restart
         </button>
       </div>
@@ -269,8 +275,6 @@ function App() {
         height={CANVAS_HEIGHT}
         onClick={handleCanvasClick}
       />
-
-      <p className="result-line">{resultLine}</p>
     </div>
   );
 }
