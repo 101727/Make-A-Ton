@@ -8,9 +8,9 @@ const GAME_SECONDS = 60;
 const GONE_STAGE = 3;
 
 const STAGE_STYLES = [
-  { fill: '#d5d5d5', border: '#f5f5f5' },
-  { fill: '#9f9f9f', border: '#c8c8c8' },
-  { fill: '#646464', border: '#9f9f9f' },
+  { fill: '#d7d7d7', border: '#f0f0f0' },
+  { fill: '#a0a0a0', border: '#c9c9c9' },
+  { fill: '#6a6a6a', border: '#9c9c9c' },
 ];
 
 function clamp(value, min, max) {
@@ -51,8 +51,8 @@ function createBoxes(width, height, count) {
         width: boxWidth,
         height: boxHeight,
         melt: Math.random() * 0.45,
-        // Larger boxes melt slightly slower so gameplay pressure feels even.
-        meltRate: clamp(0.14 + Math.random() * 0.08 - boxWidth / 2200, 0.09, 0.2),
+        // Standard baseline pace.
+        meltRate: clamp(0.14 + Math.random() * 0.08 - boxWidth / 2400, 0.1, 0.22),
       };
 
       if (!overlapsAny(candidate, boxes)) {
@@ -71,7 +71,7 @@ function createBoxes(width, height, count) {
         width: fallbackWidth,
         height: fallbackHeight,
         melt: Math.random() * 0.45,
-        meltRate: 0.12 + Math.random() * 0.05,
+        meltRate: 0.13 + Math.random() * 0.07,
       });
     }
   }
@@ -85,31 +85,17 @@ function countFullBoxes(boxes) {
 
 function drawMeltedBox(ctx, box, stage) {
   const style = STAGE_STYLES[Math.min(stage, STAGE_STYLES.length - 1)];
-  const meltRatio = clamp((box.melt % 1) + stage * 0.14, 0, 0.95);
-  const topDrop = box.height * 0.42 * meltRatio;
-  const sideInset = box.width * 0.16 * meltRatio;
 
   ctx.fillStyle = style.fill;
   ctx.strokeStyle = style.border;
   ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(box.x + sideInset, box.y + topDrop);
-  ctx.lineTo(box.x + box.width - sideInset, box.y + topDrop * 0.9);
-  ctx.lineTo(box.x + box.width - sideInset * 0.4, box.y + box.height);
-  ctx.lineTo(box.x + sideInset * 0.5, box.y + box.height);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillRect(box.x, box.y, box.width, box.height);
+  ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-  if (stage >= 1) {
-    ctx.fillStyle = 'rgba(18, 18, 18, 0.24)';
-    const dripCount = stage + 1;
-    for (let i = 0; i < dripCount; i += 1) {
-      const dripX = box.x + (box.width / (dripCount + 1)) * (i + 1);
-      const dripHeight = box.height * (0.06 + Math.random() * 0.12);
-      const dripWidth = 3 + Math.random() * 4;
-      ctx.fillRect(dripX, box.y + box.height - 1, dripWidth, dripHeight);
-    }
+  if (stage > 0) {
+    ctx.fillStyle = 'rgba(20, 20, 20, 0.14)';
+    const overlayHeight = box.height * (0.2 + stage * 0.2);
+    ctx.fillRect(box.x, box.y + box.height - overlayHeight, box.width, overlayHeight);
   }
 }
 
@@ -117,8 +103,8 @@ function drawScene(ctx, boxes, status) {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
   const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  gradient.addColorStop(0, '#252525');
-  gradient.addColorStop(1, '#111111');
+  gradient.addColorStop(0, '#1f2329');
+  gradient.addColorStop(1, '#101214');
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -184,14 +170,13 @@ function App() {
       if (status === 'playing') {
         const delta = (timestamp - lastFrameRef.current) / 1000;
         lastFrameRef.current = timestamp;
-
+        const elapsedSeconds = (timestamp - startTimeRef.current) / 1000;
+        const remaining = clamp(GAME_SECONDS - elapsedSeconds, 0, GAME_SECONDS);
         for (let i = 0; i < boxes.length; i += 1) {
           boxes[i].melt += boxes[i].meltRate * delta;
         }
 
         const hasGoneBox = boxes.some((box) => box.melt >= GONE_STAGE);
-        const elapsedSeconds = (timestamp - startTimeRef.current) / 1000;
-        const remaining = clamp(GAME_SECONDS - elapsedSeconds, 0, GAME_SECONDS);
 
         setTimeLeft(remaining);
         setFullBoxes(countFullBoxes(boxes));
@@ -252,39 +237,25 @@ function App() {
     }
   };
 
-  const title =
-    status === 'lost'
-      ? 'You lost. A box fully melted.'
-      : status === 'won'
-      ? 'You survived all 60 seconds.'
-      : 'Keep every box from reaching the gone stage.';
-
-  const subtitle =
+  const statusLabel =
+    status === 'playing' ? 'RUNNING' : status === 'won' ? 'WIN' : status === 'lost' ? 'LOSS' : 'READY';
+  const resultLine =
     status === 'won'
-      ? `Final score: ${finalScore} full boxes`
-      : 'Click boxes to reset them to full form.';
+      ? `Survived 60s. Score: ${finalScore}/${TOTAL_BOXES} fully frozen`
+      : status === 'lost'
+      ? 'A box reached gone state. Click Restart.'
+      : 'Click any box to reset it back to full.';
 
   return (
     <div className="app-shell">
       <div className="hud">
-        <h1>Melt Guard</h1>
-        <p>{title}</p>
-        <p>{subtitle}</p>
+        <h1>Ice To Meet You</h1>
         <div className="stats-row">
-          <div className="stat-card">
-            <span className="stat-label">Time Left</span>
-            <strong>{timeLeft.toFixed(1)}s</strong>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Full Boxes</span>
-            <strong>
-              {fullBoxes}/{TOTAL_BOXES}
-            </strong>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">State</span>
-            <strong>{status.toUpperCase()}</strong>
-          </div>
+          <strong>{timeLeft.toFixed(1)}s</strong>
+          <strong>
+            {fullBoxes}/{TOTAL_BOXES} full
+          </strong>
+          <strong>{statusLabel}</strong>
         </div>
         <button type="button" onClick={startGame}>
           Restart
@@ -298,6 +269,8 @@ function App() {
         height={CANVAS_HEIGHT}
         onClick={handleCanvasClick}
       />
+
+      <p className="result-line">{resultLine}</p>
     </div>
   );
 }
