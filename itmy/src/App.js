@@ -11,6 +11,8 @@ const CANVAS_HEIGHT = 620;
 const TOTAL_BOXES = 20;
 const GAME_SECONDS = 30;
 const GONE_STAGE = 3;
+const LATE_GAME_SECONDS = 10;
+const LATE_GAME_MAX_MULTIPLIER = 1.3;
 
 const STAGE_STYLES = [
   { fill: '#d7d7d7', border: '#f0f0f0' },
@@ -165,8 +167,10 @@ function App() {
         lastFrameRef.current = timestamp;
         const elapsedSeconds = (timestamp - startTimeRef.current) / 1000;
         const remaining = clamp(GAME_SECONDS - elapsedSeconds, 0, GAME_SECONDS);
+        const lateGameProgress = clamp((LATE_GAME_SECONDS - remaining) / LATE_GAME_SECONDS, 0, 1);
+        const meltMultiplier = 1 + (LATE_GAME_MAX_MULTIPLIER - 1) * lateGameProgress;
         for (let i = 0; i < boxes.length; i += 1) {
-          boxes[i].melt += boxes[i].meltRate * delta;
+          boxes[i].melt += boxes[i].meltRate * delta * meltMultiplier;
         }
 
         const hasGoneBox = boxes.some((box) => box.melt >= GONE_STAGE);
