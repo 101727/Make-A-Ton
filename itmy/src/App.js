@@ -7,6 +7,7 @@ import Lose from './components/Lose';
 import PauseMenu from './components/PauseMenu';
 import gameMusic from './Music/IceToMeetYou.mp3';
 import shatterSfx from './SFX/shatter.mp3';
+import whooshSfx from './SFX/whoosh.mp3';
 
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
@@ -134,6 +135,7 @@ function App() {
   const pausedTimeRef = useRef(0);
   const musicRef = useRef(null);
   const shatterRef = useRef(null);
+  const whooshRef = useRef(null);
 
   useEffect(() => {
     const audio = new Audio(gameMusic);
@@ -157,11 +159,34 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const audio = new Audio(whooshSfx);
+    audio.preload = 'auto';
+    whooshRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
   const [status, setStatus] = useState('ready');
   const [timeLeft, setTimeLeft] = useState(GAME_SECONDS);
   const [fullBoxes, setFullBoxes] = useState(TOTAL_BOXES);
   const [finalScore, setFinalScore] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  const playNonVictoryEndAudio = useCallback(() => {
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.currentTime = 0;
+    }
+
+    if (whooshRef.current) {
+      whooshRef.current.currentTime = 0;
+      whooshRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const startGame = useCallback(() => {
     if (musicRef.current) {
@@ -211,6 +236,7 @@ function App() {
         setFullBoxes(countFullBoxes(boxes));
 
         if (hasGoneBox) {
+          playNonVictoryEndAudio();
           setStatus('lost');
           shouldContinue = false;
         } else if (remaining <= 0) {
@@ -274,8 +300,11 @@ function App() {
   };
 
   const goToMainMenu = useCallback(() => {
+    if (status === 'playing') {
+      playNonVictoryEndAudio();
+    }
     setStatus('ready');
-  }, []);
+  }, [playNonVictoryEndAudio, status]);
 
   const handleStop = useCallback(() => {
     pausedTimeRef.current = performance.now();
@@ -291,14 +320,16 @@ function App() {
   }, []);
 
   const handleRestartFromPause = useCallback(() => {
+    playNonVictoryEndAudio();
     setIsPaused(false);
     startGame();
-  }, [startGame]);
+  }, [playNonVictoryEndAudio, startGame]);
 
   const handleMenuFromPause = useCallback(() => {
+    playNonVictoryEndAudio();
     setIsPaused(false);
     setStatus('ready');
-  }, []);
+  }, [playNonVictoryEndAudio]);
 
   if (status === 'ready') {
     return <MainMenu onStart={startGame} />;
