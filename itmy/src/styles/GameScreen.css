@@ -15,7 +15,7 @@
   justify-content: center;
   z-index: 1000;
   overflow: hidden;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
   padding: 20px;
 }
 
@@ -52,6 +52,7 @@
   font-size: 42px;
   color: #FFFFFF;
   margin-bottom: 10px;
+  font-family: var(--font-heading);
   font-weight: bold;
   text-shadow: 4px 4px 0px #000;
   position: relative;
@@ -116,7 +117,7 @@
   z-index: 10;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
   letter-spacing: 1px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 .game-button:hover {

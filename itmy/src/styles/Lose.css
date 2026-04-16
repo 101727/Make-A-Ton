@@ -75,7 +75,7 @@
   animation: pixelShake 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
   overflow: hidden;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 @keyframes pixelShake {
@@ -96,6 +96,7 @@
   font-size: 48px;
   color: #FFFFFF;
   margin-bottom: 15px;
+  font-family: var(--font-heading);
   font-weight: bold;
   text-shadow: 4px 4px 0px #8B0000;
   position: relative;
@@ -159,7 +160,7 @@
   z-index: 1;
   box-shadow: 4px 4px 0px #0F4C6B;
   letter-spacing: 2px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 .lose-button:hover {

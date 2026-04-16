@@ -10,12 +10,12 @@
   font-weight: bold;
   box-shadow: 4px 4px 0px #0F4C6B;
   transition: all 0.1s;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 .timer-text {
   color: #000000;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
   letter-spacing: 3px;
 }
 

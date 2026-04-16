@@ -9,7 +9,7 @@
   font-size: 18px;
   font-weight: bold;
   box-shadow: 4px 4px 0px #0F4C6B;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 .score-text {
@@ -20,7 +20,7 @@
 
 .score-value {
   color: #000;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
   letter-spacing: 2px;
   min-width: 80px;
   text-align: right;

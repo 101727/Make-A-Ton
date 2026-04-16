@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -53,6 +53,7 @@
   font-size: 48px;
   color: #FFFFFF;
   margin-bottom: 40px;
+  font-family: var(--font-heading);
   font-weight: bold;
   text-shadow: 4px 4px 0px #0F4C6B;
   letter-spacing: 3px;
@@ -77,7 +78,7 @@
   z-index: 1;
   box-shadow: 4px 4px 0px #0F4C6B;
   letter-spacing: 2px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-body);
 }
 
 .pause-button.resume {
