@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/Win.css';
 
-function Win({ score = 20, onRestart }) {
+function Win({ score = 20, onRestart, onMainMenu }) {
   return (
     <div className="win-screen">
       <div className="win-container">
@@ -12,9 +12,14 @@ function Win({ score = 20, onRestart }) {
           <span className="final-score">{score}/20</span>
         </div>
         
-        <button className="win-button" onClick={onRestart}>
-          Main Menu
-        </button>
+        <div className="button-group">
+          <button className="win-button" onClick={onRestart}>
+            Play Again
+          </button>
+          <button className="win-button secondary" onClick={onMainMenu}>
+            Main Menu
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
-import Score from './components/Score';
-import Timer from './components/Timer';
+import GameScreen from './components/GameScreen';
 import Win from './components/Win';
 import Lose from './components/Lose';
+import PauseMenu from './components/PauseMenu';
 
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
@@ -56,7 +56,6 @@ function createBoxes(width, height, count) {
         width: boxWidth,
         height: boxHeight,
         melt: Math.random() * 0.45,
-        // Standard baseline pace.
         meltRate: clamp(0.14 + Math.random() * 0.08 - boxWidth / 2400, 0.1, 0.22),
       };
 
@@ -107,15 +106,6 @@ function drawMeltedBox(ctx, box, stage) {
 function drawScene(ctx, boxes, status) {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  gradient.addColorStop(0, '#1f2329');
-  gradient.addColorStop(1, '#101214');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  ctx.fillStyle = '#202020';
-  ctx.fillRect(0, CANVAS_HEIGHT * 0.72, CANVAS_WIDTH, CANVAS_HEIGHT * 0.28);
-
   boxes.forEach((box) => {
     const stage = Math.floor(box.melt);
     if (stage >= GONE_STAGE) {
@@ -137,11 +127,13 @@ function App() {
   const animationRef = useRef(null);
   const startTimeRef = useRef(0);
   const lastFrameRef = useRef(0);
+  const pausedTimeRef = useRef(0);
 
   const [status, setStatus] = useState('ready');
   const [timeLeft, setTimeLeft] = useState(GAME_SECONDS);
   const [fullBoxes, setFullBoxes] = useState(TOTAL_BOXES);
   const [finalScore, setFinalScore] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const startGame = useCallback(() => {
     boxesRef.current = createBoxes(CANVAS_WIDTH, CANVAS_HEIGHT, TOTAL_BOXES);
@@ -168,7 +160,7 @@ function App() {
       const boxes = boxesRef.current;
       let shouldContinue = true;
 
-      if (status === 'playing') {
+      if (status === 'playing' && !isPaused) {
         const delta = (timestamp - lastFrameRef.current) / 1000;
         lastFrameRef.current = timestamp;
         const elapsedSeconds = (timestamp - startTimeRef.current) / 1000;
@@ -191,6 +183,8 @@ function App() {
           setStatus('won');
           shouldContinue = false;
         }
+      } else if (status === 'playing' && isPaused) {
+        lastFrameRef.current = timestamp;
       }
 
       drawScene(ctx, boxesRef.current, status);
@@ -207,10 +201,10 @@ function App() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [status]);
+  }, [status, isPaused]);
 
   const handleCanvasClick = (event) => {
-    if (status !== 'playing') {
+    if (status !== 'playing' || isPaused) {
       return;
     }
 
@@ -238,7 +232,30 @@ function App() {
     }
   };
 
-  const handleRestart = useCallback(() => {
+  const goToMainMenu = useCallback(() => {
+    setStatus('ready');
+  }, []);
+
+  const handleStop = useCallback(() => {
+    pausedTimeRef.current = performance.now();
+    setIsPaused(true);
+  }, []);
+
+  const handleResume = useCallback(() => {
+    // Adjust start time to account for pause duration
+    const pauseDuration = performance.now() - pausedTimeRef.current;
+    startTimeRef.current += pauseDuration;
+    lastFrameRef.current = performance.now();
+    setIsPaused(false);
+  }, []);
+
+  const handleRestartFromPause = useCallback(() => {
+    setIsPaused(false);
+    startGame();
+  }, [startGame]);
+
+  const handleMenuFromPause = useCallback(() => {
+    setIsPaused(false);
     setStatus('ready');
   }, []);
 
@@ -247,35 +264,33 @@ function App() {
   }
 
   if (status === 'won') {
-    return <Win score={finalScore} onRestart={handleRestart} />;
+    return <Win score={finalScore} onRestart={startGame} onMainMenu={goToMainMenu} />;
   }
 
   if (status === 'lost') {
-    return <Lose score={fullBoxes} onRestart={handleRestart} />;
+    return <Lose score={fullBoxes} onRestart={startGame} onMainMenu={goToMainMenu} />;
   }
 
   return (
-    <div className="app-shell">
-      <div className="hud">
-        <h1>Ice To Meet You</h1>
-        <div className="stats-row">
-          <Timer initialSeconds={Math.ceil(timeLeft)} />
-          <Score initialScore={fullBoxes} />
-          <strong>{fullBoxes}/{TOTAL_BOXES} full</strong>
-        </div>
-        <button type="button" onClick={handleRestart}>
-          Restart
-        </button>
-      </div>
-
-      <canvas
-        ref={canvasRef}
-        className="game-canvas"
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        onClick={handleCanvasClick}
+    <>
+      <GameScreen
+        timeLeft={timeLeft}
+        fullBoxes={fullBoxes}
+        totalBoxes={TOTAL_BOXES}
+        canvasRef={canvasRef}
+        canvasWidth={CANVAS_WIDTH}
+        canvasHeight={CANVAS_HEIGHT}
+        onCanvasClick={handleCanvasClick}
+        onStop={handleStop}
       />
-    </div>
+      {isPaused && (
+        <PauseMenu
+          onResume={handleResume}
+          onRestart={handleRestartFromPause}
+          onMainMenu={handleMenuFromPause}
+        />
+      )}
+    </>
   );
 }
 

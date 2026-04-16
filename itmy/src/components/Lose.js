@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/Lose.css';
 
-function Lose({ score = 0, onRestart }) {
+function Lose({ score = 0, onRestart, onMainMenu }) {
   return (
     <div className="lose-screen">
       <div className="lose-container">
@@ -12,9 +12,14 @@ function Lose({ score = 0, onRestart }) {
           <span className="final-score">{score}/20</span>
         </div>
         
-        <button className="lose-button" onClick={onRestart}>
-          Retry
-        </button>
+        <div className="button-group">
+          <button className="lose-button" onClick={onRestart}>
+            Play Again
+          </button>
+          <button className="lose-button secondary" onClick={onMainMenu}>
+            Main Menu
+          </button>
+        </div>
       </div>
     </div>
   );

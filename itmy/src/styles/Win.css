@@ -70,7 +70,7 @@
   max-width: 500px;
   width: 90%;
   text-align: center;
-  box-shadow: 8px 8px 0px #004E89, 12px 12px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 8px 8px 0px #004E89, 12px 12px 0px rgba(92, 111, 119, 0.3);
   animation: pixelPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
   overflow: hidden;
@@ -88,26 +88,6 @@
   100% {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-.win-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: none;
-  pointer-events: none;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
   }
 }
 
@@ -148,6 +128,13 @@
   color: #004E89;
   font-weight: bold;
   letter-spacing: 2px;
+}
+
+.button-group {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .win-button {
