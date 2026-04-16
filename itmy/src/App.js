@@ -10,7 +10,7 @@ import gameMusic from './Music/IceToMeetYou.mp3';
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
 const TOTAL_BOXES = 20;
-const GAME_SECONDS = 30;
+const GAME_SECONDS = 35;
 const GONE_STAGE = 3;
 const LATE_GAME_SECONDS = 10;
 const LATE_GAME_MAX_MULTIPLIER = 1.3;
