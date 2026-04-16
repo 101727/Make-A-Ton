@@ -68,6 +68,7 @@ function MainMenu({ onStart }) {
                     onClick={() => handleModeSelect(mode.id)}
                   >
                     <span className="difficulty-card-title">{mode.title}</span>
+                    <div className="difficulty-card-image"></div>
                     <span className="difficulty-card-description">{mode.description}</span>
                   </button>
                 ))}
