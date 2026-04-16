@@ -13,7 +13,6 @@ import {
   GONE_STAGE,
   LATE_GAME_SECONDS,
   LATE_GAME_MAX_MULTIPLIER,
-  STAGE_STYLES,
 } from './logic/gameConfig';
 import {
   createBoxes,
@@ -105,7 +104,6 @@ function App() {
         canvasWidth: CANVAS_WIDTH,
         canvasHeight: CANVAS_HEIGHT,
         goneStage: GONE_STAGE,
-        stageStyles: STAGE_STYLES,
       });
 
       if (shouldContinue) {

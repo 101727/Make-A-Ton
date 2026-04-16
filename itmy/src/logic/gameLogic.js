@@ -67,23 +67,41 @@ export function countFullBoxes(boxes) {
   return boxes.reduce((total, box) => total + (Math.floor(box.melt) === 0 ? 1 : 0), 0);
 }
 
-function drawMeltedBox(ctx, box, stage, stageStyles) {
-  const style = stageStyles[Math.min(stage, stageStyles.length - 1)];
+const ICE_CAP_SOURCES = ['/Images/iceCap1.png', '/Images/iceCap2.png', '/Images/iceCap3.png'];
 
-  ctx.fillStyle = style.fill;
-  ctx.strokeStyle = style.border;
+const ICE_CAP_IMAGES = ICE_CAP_SOURCES.map((source) => {
+  const image = new Image();
+  image.src = source;
+  return image;
+});
+
+function drawFallbackIceCap(ctx, box, stage) {
+  const stageTints = ['rgba(255, 255, 255, 0.95)', 'rgba(93, 191, 219, 0.9)', 'rgba(196, 30, 58, 0.82)'];
+  ctx.fillStyle = stageTints[Math.min(stage, stageTints.length - 1)];
+  ctx.strokeStyle = '#FFFFFF';
   ctx.lineWidth = 2;
   ctx.fillRect(box.x, box.y, box.width, box.height);
   ctx.strokeRect(box.x, box.y, box.width, box.height);
-
-  if (stage > 0) {
-    ctx.fillStyle = 'rgba(20, 20, 20, 0.14)';
-    const overlayHeight = box.height * (0.2 + stage * 0.2);
-    ctx.fillRect(box.x, box.y + box.height - overlayHeight, box.width, overlayHeight);
-  }
 }
 
-export function drawScene({ ctx, boxes, status, canvasWidth, canvasHeight, goneStage, stageStyles }) {
+function drawIceCapImage(ctx, box, stage) {
+  const image = ICE_CAP_IMAGES[Math.min(stage, ICE_CAP_IMAGES.length - 1)];
+
+  if (!image.complete || image.naturalWidth === 0 || image.naturalHeight === 0) {
+    drawFallbackIceCap(ctx, box, stage);
+    return;
+  }
+
+  const scale = Math.min(box.width / image.naturalWidth, box.height / image.naturalHeight);
+  const drawWidth = image.naturalWidth * scale;
+  const drawHeight = image.naturalHeight * scale;
+  const drawX = box.x + (box.width - drawWidth) / 2;
+  const drawY = box.y + (box.height - drawHeight) / 2;
+
+  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+}
+
+export function drawScene({ ctx, boxes, status, canvasWidth, canvasHeight, goneStage }) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
   boxes.forEach((box) => {
@@ -92,7 +110,7 @@ export function drawScene({ ctx, boxes, status, canvasWidth, canvasHeight, goneS
       return;
     }
 
-    drawMeltedBox(ctx, box, stage, stageStyles);
+    drawIceCapImage(ctx, box, stage);
   });
 
   if (status !== 'playing') {
