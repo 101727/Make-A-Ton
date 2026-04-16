@@ -3,10 +3,14 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(180deg, #5DBFDB 0%, #2BA5C3 50%, #0F8BA3 100%);
+  background-image: url('../../public/Images/panorama.jpg');
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  animation: panoramaPan 30s linear infinite;
   font-family: var(--font-body);
   color: white;
   image-rendering: pixelated;
+  overflow: hidden;
 }
 
 .menu-screen {
@@ -17,6 +21,7 @@
   width: 100%;
   min-height: 100vh;
   animation: fadeIn 0.8s ease-in;
+  background-color: rgba(15, 76, 107, 0.4);
 }
 
 @keyframes fadeIn {
@@ -25,6 +30,15 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes panoramaPan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
   }
 }
 
