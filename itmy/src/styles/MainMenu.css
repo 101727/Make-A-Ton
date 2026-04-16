@@ -197,10 +197,22 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+  animation: gridFadeIn 0.5s ease-out;
+}
+
+@keyframes gridFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .difficulty-card {
-  min-height: 170px;
+  min-height: 500px;
   padding: 18px 16px;
   border: 4px solid #ffffff;
   background: linear-gradient(180deg, #fefefe 0%, #dff8ff 100%);
@@ -210,10 +222,34 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   gap: 12px;
-  text-align: left;
+  text-align: center;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
+  animation: cardSlideIn 0.5s ease-out backwards;
+}
+
+.difficulty-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.difficulty-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.difficulty-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes cardSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .difficulty-card:hover {
@@ -238,12 +274,41 @@
   line-height: 1.45;
 }
 
+.difficulty-card-image {
+  width: 150px;
+  height: 250px;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
 .difficulty-card-hard {
   background: linear-gradient(180deg, #fff8de 0%, #ffe49b 100%);
 }
 
+.difficulty-card-hard .difficulty-card-image {
+  background-image: url('/public/Images/chill-penguin-hard.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.difficulty-card-easy .difficulty-card-image {
+  background-image: url('/public/Images/baby-penguin-fixed.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .difficulty-card-truePenguin {
-  background: linear-gradient(180deg, #def8ff 0%, #b0ecff 100%);
+  background: linear-gradient(180deg, #b00202 0%, #5d0000 100%);
+  color: #ffffff;
+}
+
+.difficulty-card-truePenguin .difficulty-card-image {
+  background-image: url('/public/Images/punk-penguin.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .difficulty-close-btn {
