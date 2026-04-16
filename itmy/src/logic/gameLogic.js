@@ -69,6 +69,12 @@ export function countFullBoxes(boxes) {
 
 const ICE_CAP_SOURCES = ['/Images/iceCap1.png', '/Images/iceCap2.png', '/Images/iceCap3.png'];
 
+const ICE_CAP_STAGE_INDICATORS = [
+  { border: '#FFFFFF', accent: '#5DBFDB' },
+  { border: '#FFD700', accent: '#0F4C6B' },
+  { border: '#C41E3A', accent: '#FFFFFF' },
+];
+
 const ICE_CAP_IMAGES = ICE_CAP_SOURCES.map((source) => {
   const image = new Image();
   image.src = source;
@@ -78,8 +84,8 @@ const ICE_CAP_IMAGES = ICE_CAP_SOURCES.map((source) => {
 function drawFallbackIceCap(ctx, box, stage) {
   const stageTints = ['rgba(255, 255, 255, 0.95)', 'rgba(93, 191, 219, 0.9)', 'rgba(196, 30, 58, 0.82)'];
   ctx.fillStyle = stageTints[Math.min(stage, stageTints.length - 1)];
-  ctx.strokeStyle = '#FFFFFF';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = ICE_CAP_STAGE_INDICATORS[Math.min(stage, ICE_CAP_STAGE_INDICATORS.length - 1)].border;
+  ctx.lineWidth = 3;
   ctx.fillRect(box.x, box.y, box.width, box.height);
   ctx.strokeRect(box.x, box.y, box.width, box.height);
 }
@@ -98,7 +104,29 @@ function drawIceCapImage(ctx, box, stage) {
   const drawX = box.x + (box.width - drawWidth) / 2;
   const drawY = box.y + (box.height - drawHeight) / 2;
 
+  const indicator = ICE_CAP_STAGE_INDICATORS[Math.min(stage, ICE_CAP_STAGE_INDICATORS.length - 1)];
+  const frameInset = 3;
+  const frameX = drawX - frameInset;
+  const frameY = drawY - frameInset;
+  const frameWidth = drawWidth + frameInset * 2;
+  const frameHeight = drawHeight + frameInset * 2;
+
   ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+
+  ctx.save();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = indicator.border;
+  ctx.shadowColor = indicator.accent;
+  ctx.shadowBlur = 0;
+  ctx.strokeRect(frameX, frameY, frameWidth, frameHeight);
+
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = indicator.accent;
+  ctx.strokeRect(frameX + 4, frameY + 4, frameWidth - 8, frameHeight - 8);
+
+  ctx.fillStyle = indicator.border;
+  ctx.fillRect(frameX - 5, frameY - 5, 10, 10);
+  ctx.restore();
 }
 
 export function drawScene({ ctx, boxes, status, canvasWidth, canvasHeight, goneStage }) {
