@@ -63,14 +63,14 @@
 }
 
 .win-container {
-  background: #87CEEB;
-  border: 6px solid #004E89;
+  background: #5DBFDB;
+  border: 6px solid #0F4C6B;
   border-radius: 0px;
   padding: 50px;
   max-width: 500px;
   width: 90%;
   text-align: center;
-  box-shadow: 8px 8px 0px #004E89, 12px 12px 0px rgba(92, 111, 119, 0.3);
+  box-shadow: 8px 8px 0px #0F4C6B, 12px 12px 0px rgba(92, 111, 119, 0.3);
   animation: pixelPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
   overflow: hidden;
@@ -96,7 +96,7 @@
   color: #FFFFFF;
   margin-bottom: 15px;
   font-weight: bold;
-  text-shadow: 4px 4px 0px #004E89;
+  text-shadow: 4px 4px 0px #0F4C6B;
   position: relative;
   z-index: 1;
   letter-spacing: 2px;
@@ -104,7 +104,7 @@
 
 .win-message {
   font-size: 18px;
-  color: #004E89;
+  color: #FFFFFF;
   margin-bottom: 30px;
   position: relative;
   z-index: 1;

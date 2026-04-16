@@ -31,11 +31,10 @@ function MainMenu({ onStart }) {
 
         <div className="menu-container">
           <h1 className="game-title">Ice to Meet You</h1>
-          <p className="game-subtitle">Save the World</p>
 
           <div className="menu-buttons">
             <button className="menu-btn start-btn" onClick={handleStartGame}>
-              Start Game
+              Save the World
             </button>
           </div>
         </div>
