@@ -6,6 +6,7 @@ import Win from './components/Win';
 import Lose from './components/Lose';
 import PauseMenu from './components/PauseMenu';
 import gameMusic from './Music/IceToMeetYou.mp3';
+import shatterSfx from './SFX/shatter.mp3';
 
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
@@ -132,11 +133,23 @@ function App() {
   const lastFrameRef = useRef(0);
   const pausedTimeRef = useRef(0);
   const musicRef = useRef(null);
+  const shatterRef = useRef(null);
 
   useEffect(() => {
     const audio = new Audio(gameMusic);
     audio.preload = 'auto';
     musicRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = new Audio(shatterSfx);
+    audio.preload = 'auto';
+    shatterRef.current = audio;
 
     return () => {
       audio.pause();
@@ -248,7 +261,12 @@ function App() {
       const insideX = pointerX >= box.x && pointerX <= box.x + box.width;
       const insideY = pointerY >= box.y && pointerY <= box.y + box.height;
       if (insideX && insideY && box.melt < GONE_STAGE) {
+        const wasMelting = box.melt > 0;
         box.melt = 0;
+        if (wasMelting && shatterRef.current) {
+          const sfxInstance = shatterRef.current.cloneNode();
+          sfxInstance.play().catch(() => {});
+        }
         setFullBoxes(countFullBoxes(boxes));
         break;
       }
