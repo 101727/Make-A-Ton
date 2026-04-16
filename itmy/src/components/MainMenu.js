@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import '../styles/MainMenu.css';
 import { useGameAudio } from '../logic/useGameAudio';
+import { DIFFICULTY_MODES } from '../logic/gameConfig';
 
 function MainMenu({ onStart }) {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const { playPenguin } = useGameAudio();
 
   const handleStartGame = () => {
+    setIsDifficultyOpen(true);
+  };
+
+  const handleModeSelect = (modeId) => {
+    setIsDifficultyOpen(false);
     if (onStart) {
-      onStart();
+      onStart(modeId);
     }
   };
 
@@ -33,11 +40,41 @@ function MainMenu({ onStart }) {
           <h1 className="game-title">Ice to Meet You</h1>
 
           <div className="menu-buttons">
-            <button className="menu-btn start-btn" onClick={handleStartGame}>
+            <button className="menu-btn start-btn" type="button" onClick={handleStartGame}>
               Save the World
             </button>
           </div>
         </div>
+
+        {isDifficultyOpen && (
+          <div className="difficulty-overlay" onClick={() => setIsDifficultyOpen(false)}>
+            <div className="difficulty-modal" onClick={(event) => event.stopPropagation()}>
+              <button
+                className="difficulty-close-btn"
+                type="button"
+                aria-label="Close difficulty picker"
+                onClick={() => setIsDifficultyOpen(false)}
+              >
+                X
+              </button>
+              <h2 className="difficulty-title">Choose Your Chill</h2>
+
+              <div className="difficulty-grid">
+                {Object.values(DIFFICULTY_MODES).map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    className={`difficulty-card difficulty-card-${mode.id}`}
+                    onClick={() => handleModeSelect(mode.id)}
+                  >
+                    <span className="difficulty-card-title">{mode.title}</span>
+                    <span className="difficulty-card-description">{mode.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {isHelpOpen && (
           <div className="help-overlay" onClick={() => setIsHelpOpen(false)}>

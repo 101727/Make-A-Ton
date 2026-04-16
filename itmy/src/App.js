@@ -13,6 +13,8 @@ import {
   GONE_STAGE,
   LATE_GAME_SECONDS,
   LATE_GAME_MAX_MULTIPLIER,
+  DEFAULT_DIFFICULTY,
+  DIFFICULTY_MODES,
 } from './logic/gameConfig';
 import {
   createBoxes,
@@ -39,8 +41,12 @@ function App() {
   const [fullBoxes, setFullBoxes] = useState(TOTAL_BOXES);
   const [finalScore, setFinalScore] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [difficulty, setDifficulty] = useState(DEFAULT_DIFFICULTY);
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((difficultyId = DEFAULT_DIFFICULTY.id) => {
+    const selectedDifficulty = DIFFICULTY_MODES[difficultyId] || DEFAULT_DIFFICULTY;
+
+    setDifficulty(selectedDifficulty);
     playRoundMusic();
 
     boxesRef.current = createBoxes(CANVAS_WIDTH, CANVAS_HEIGHT, TOTAL_BOXES);
@@ -76,7 +82,7 @@ function App() {
           LATE_GAME_SECONDS,
           LATE_GAME_MAX_MULTIPLIER
         );
-        applyMeltProgress(boxes, delta, meltMultiplier);
+        applyMeltProgress(boxes, delta, meltMultiplier * difficulty.meltSpeedMultiplier);
 
         const hasGoneBox = boxes.some((box) => box.melt >= GONE_STAGE);
 
@@ -118,7 +124,7 @@ function App() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [status, isPaused, playNonVictoryEndAudio]);
+  }, [status, isPaused, playNonVictoryEndAudio, difficulty]);
 
   const handleCanvasClick = (event) => {
     if (status !== 'playing' || isPaused) {
@@ -137,7 +143,11 @@ function App() {
     const pointerY = (event.clientY - rect.top) * scaleY;
     const boxes = boxesRef.current;
 
-    const { didReset, wasMelting } = resetBoxAtPointer(boxes, pointerX, pointerY, GONE_STAGE);
+    const { didReset, wasMelting } = resetBoxAtPointer(boxes, pointerX, pointerY, GONE_STAGE, {
+      relocateOnSave: difficulty.relocateOnSave,
+      canvasWidth: CANVAS_WIDTH,
+      canvasHeight: CANVAS_HEIGHT,
+    });
     if (didReset) {
       if (wasMelting) {
         playShatter();
@@ -169,8 +179,8 @@ function App() {
   const handleRestartFromPause = useCallback(() => {
     playNonVictoryEndAudio();
     setIsPaused(false);
-    startGame();
-  }, [playNonVictoryEndAudio, startGame]);
+    startGame(difficulty.id);
+  }, [difficulty.id, playNonVictoryEndAudio, startGame]);
 
   const handleMenuFromPause = useCallback(() => {
     playNonVictoryEndAudio();
@@ -184,11 +194,11 @@ function App() {
     }
 
     if (status === 'won') {
-      return <Win score={finalScore} onRestart={startGame} onMainMenu={goToMainMenu} />;
+      return <Win score={finalScore} onRestart={() => startGame(difficulty.id)} onMainMenu={goToMainMenu} />;
     }
 
     if (status === 'lost') {
-      return <Lose onRestart={startGame} onMainMenu={goToMainMenu} />;
+      return <Lose onRestart={() => startGame(difficulty.id)} onMainMenu={goToMainMenu} />;
     }
 
     return (

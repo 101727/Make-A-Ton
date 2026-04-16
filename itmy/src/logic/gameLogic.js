@@ -14,6 +14,13 @@ function overlapsAny(candidate, placed) {
   });
 }
 
+function getRandomPosition(width, height, boxWidth, boxHeight, padding) {
+  return {
+    x: padding + Math.random() * (width - boxWidth - padding * 2),
+    y: padding + Math.random() * (height - boxHeight - padding * 2),
+  };
+}
+
 export function createBoxes(width, height, count) {
   const boxes = [];
   const maxAttempts = 600;
@@ -163,7 +170,30 @@ export function applyMeltProgress(boxes, delta, meltMultiplier) {
   }
 }
 
-export function resetBoxAtPointer(boxes, pointerX, pointerY, goneStage) {
+function moveBoxToRandomLocation(boxes, targetBox, width, height) {
+  const padding = 24;
+  const maxAttempts = 300;
+  const otherBoxes = boxes.filter((box) => box.id !== targetBox.id);
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const position = getRandomPosition(width, height, targetBox.width, targetBox.height, padding);
+    const candidate = {
+      ...targetBox,
+      x: position.x,
+      y: position.y,
+    };
+
+    if (!overlapsAny(candidate, otherBoxes)) {
+      targetBox.x = candidate.x;
+      targetBox.y = candidate.y;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function resetBoxAtPointer(boxes, pointerX, pointerY, goneStage, options = {}) {
   for (let i = boxes.length - 1; i >= 0; i -= 1) {
     const box = boxes[i];
     const insideX = pointerX >= box.x && pointerX <= box.x + box.width;
@@ -172,9 +202,16 @@ export function resetBoxAtPointer(boxes, pointerX, pointerY, goneStage) {
     if (insideX && insideY && box.melt < goneStage) {
       const wasMelting = box.melt > 0;
       box.melt = 0;
-      return { didReset: true, wasMelting };
+      const didRelocate =
+        options.relocateOnSave &&
+        typeof options.canvasWidth === 'number' &&
+        typeof options.canvasHeight === 'number'
+          ? moveBoxToRandomLocation(boxes, box, options.canvasWidth, options.canvasHeight)
+          : false;
+
+      return { didReset: true, wasMelting, didRelocate };
     }
   }
 
-  return { didReset: false, wasMelting: false };
+  return { didReset: false, wasMelting: false, didRelocate: false };
 }
