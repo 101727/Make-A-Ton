@@ -11,6 +11,25 @@
   box-sizing: border-box;
 }
 
+.logo-header {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+}
+
+.logo-img {
+  height: 50px;
+  width: 50px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
+
 .app-shell {
   min-height: 100vh;
   display: flex;

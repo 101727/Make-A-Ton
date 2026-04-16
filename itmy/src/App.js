@@ -178,37 +178,48 @@ function App() {
     setStatus('ready');
   }, [playNonVictoryEndAudio]);
 
-  if (status === 'ready') {
-    return <MainMenu onStart={startGame} />;
-  }
+  const renderScreen = () => {
+    if (status === 'ready') {
+      return <MainMenu onStart={startGame} />;
+    }
 
-  if (status === 'won') {
-    return <Win score={finalScore} onRestart={startGame} onMainMenu={goToMainMenu} />;
-  }
+    if (status === 'won') {
+      return <Win score={finalScore} onRestart={startGame} onMainMenu={goToMainMenu} />;
+    }
 
-  if (status === 'lost') {
-    return <Lose onRestart={startGame} onMainMenu={goToMainMenu} />;
-  }
+    if (status === 'lost') {
+      return <Lose onRestart={startGame} onMainMenu={goToMainMenu} />;
+    }
+
+    return (
+      <>
+        <GameScreen
+          timeLeft={timeLeft}
+          fullBoxes={fullBoxes}
+          totalBoxes={TOTAL_BOXES}
+          canvasRef={canvasRef}
+          canvasWidth={CANVAS_WIDTH}
+          canvasHeight={CANVAS_HEIGHT}
+          onCanvasClick={handleCanvasClick}
+          onStop={handleStop}
+        />
+        {isPaused && (
+          <PauseMenu
+            onResume={handleResume}
+            onRestart={handleRestartFromPause}
+            onMainMenu={handleMenuFromPause}
+          />
+        )}
+      </>
+    );
+  };
 
   return (
     <>
-      <GameScreen
-        timeLeft={timeLeft}
-        fullBoxes={fullBoxes}
-        totalBoxes={TOTAL_BOXES}
-        canvasRef={canvasRef}
-        canvasWidth={CANVAS_WIDTH}
-        canvasHeight={CANVAS_HEIGHT}
-        onCanvasClick={handleCanvasClick}
-        onStop={handleStop}
-      />
-      {isPaused && (
-        <PauseMenu
-          onResume={handleResume}
-          onRestart={handleRestartFromPause}
-          onMainMenu={handleMenuFromPause}
-        />
-      )}
+      <div className="logo-header">
+        <img src={`${process.env.PUBLIC_URL}/Images/itmySquircle.png`} alt="ITMY Logo" className="logo-img" />
+      </div>
+      {renderScreen()}
     </>
   );
 }
