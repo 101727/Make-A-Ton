@@ -5,6 +5,7 @@ import GameScreen from './components/GameScreen';
 import Win from './components/Win';
 import Lose from './components/Lose';
 import PauseMenu from './components/PauseMenu';
+import gameMusic from './Music/IceToMeetYou.mp3';
 
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
@@ -130,6 +131,18 @@ function App() {
   const startTimeRef = useRef(0);
   const lastFrameRef = useRef(0);
   const pausedTimeRef = useRef(0);
+  const musicRef = useRef(null);
+
+  useEffect(() => {
+    const audio = new Audio(gameMusic);
+    audio.preload = 'auto';
+    musicRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
 
   const [status, setStatus] = useState('ready');
   const [timeLeft, setTimeLeft] = useState(GAME_SECONDS);
@@ -138,6 +151,12 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
 
   const startGame = useCallback(() => {
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.currentTime = 0;
+      musicRef.current.play().catch(() => {});
+    }
+
     boxesRef.current = createBoxes(CANVAS_WIDTH, CANVAS_HEIGHT, TOTAL_BOXES);
     setStatus('playing');
     setTimeLeft(GAME_SECONDS);
