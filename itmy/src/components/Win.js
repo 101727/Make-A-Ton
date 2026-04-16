@@ -6,7 +6,7 @@ function Win({ score = 20, onRestart, onMainMenu }) {
     <div className="win-screen">
       <div className="win-container">
         <h1 className="win-title">You Won!</h1>
-        <p className="win-message">Congratulations! You saved the glaciers!</p>
+        <p className="win-message">Congratulations! You saved the penguin!</p>
         
         <div className="score-display">
           <span className="final-score">{score}/20</span>

@@ -52,9 +52,10 @@ function MainMenu({ onStart }) {
               </button>
               <h2 className="help-title">How To Play</h2>
               <p className="game-description-text">
-                Hey there, ice to meet you! In this game, the ice caps are melting as result of the
-                warming climate. So, it's up to you to save the world before the floods take away
-                our poor penguin! After clicking the Save The World Button and start the game, you will see many ice caps
+                Hey there, ice to meet you! In this game, the ice caps are melting as
+                result of global warming. So, it's up to you to save the world before the floods take away
+                our poor penguin! After clicking the Save The World Button and start the game, you will
+                see many ice caps
                 in front of you. When one starts to melt, click on it to re-freeze it. Beware, the
                 melting gets faster as time goes on.
               </p>
