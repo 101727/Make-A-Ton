@@ -6,7 +6,7 @@
   height: 100%;
   background-image: url('../../public/pixil-frame-0.png');
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center 68%;
   background-size: cover;
   background-attachment: fixed;
   display: flex;
@@ -127,4 +127,10 @@
 .game-button:active {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .game-screen {
+    background-position: center 74%;
+  }
 }
