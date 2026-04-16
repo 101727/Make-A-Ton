@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import '../styles/MainMenu.css';
+import { useGameAudio } from '../logic/useGameAudio';
 
 function MainMenu({ onStart }) {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const { playPenguin } = useGameAudio();
 
   const handleStartGame = () => {
     if (onStart) {
       onStart();
     }
+  };
+
+  const handleHelpClick = () => {
+    playPenguin();
+    setIsHelpOpen(true);
   };
 
   return (
@@ -17,7 +24,7 @@ function MainMenu({ onStart }) {
           className="help-trigger"
           type="button"
           aria-label="How to play"
-          onClick={() => setIsHelpOpen(true)}
+          onClick={handleHelpClick}
         >
           ?
         </button>
