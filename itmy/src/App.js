@@ -9,7 +9,7 @@ import PauseMenu from './components/PauseMenu';
 const CANVAS_WIDTH = 980;
 const CANVAS_HEIGHT = 620;
 const TOTAL_BOXES = 20;
-const GAME_SECONDS = 60;
+const GAME_SECONDS = 30;
 const GONE_STAGE = 3;
 
 const STAGE_STYLES = [
