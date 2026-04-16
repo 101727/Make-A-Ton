@@ -268,7 +268,7 @@ function App() {
   }
 
   if (status === 'lost') {
-    return <Lose score={fullBoxes} onRestart={startGame} onMainMenu={goToMainMenu} />;
+    return <Lose onRestart={startGame} onMainMenu={goToMainMenu} />;
   }
 
   return (
